@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import BinaryIO, Union
 
 
-def utfopen(fp: Union[str, Path]) -> BinaryIO:
+def utf_open(fp: Union[str, Path]) -> BinaryIO:
     """
     Read utf encoded files
     """

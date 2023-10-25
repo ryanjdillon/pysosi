@@ -33,10 +33,10 @@ dev = [
 ]
 
 [tools.setuptools_scm]
-write_to = "sosi/_version.py"
+write_to = "pysosi/_version.py"
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include=["sosi*"]
+include=["pysosi*"]
