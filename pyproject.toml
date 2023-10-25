@@ -1,0 +1,42 @@
+[build]
+requires=["setuptools>=64.0", "setuptools_scm[toml]>=6.2", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pysosi"
+description = "Library for reading Kartverket SOSI files to GeoJSON"
+readme = "README.md"
+license = {text = "Proprietary"}
+classifiers = [
+  "Programming Language :: Python :: 3"
+]
+dependencies=[
+  "chardet>=2.3.0"
+]
+requires-python = ">=3.6"
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+  "black",
+  "coverage",
+  "flake8",
+  "mypy",
+  "pandas-stubs",
+  "pytest",
+  "pytest-cov",
+  "pyflakes",
+  "pytest-benchmark",
+  "types-pytz",
+  "types-PyYAML",
+  "tox"
+]
+
+[tools.setuptools_scm]
+write_to = "sosi/_version.py"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include=["sosi*"]
