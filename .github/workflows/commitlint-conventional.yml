@@ -1,0 +1,22 @@
+name: Conventional commit validation
+
+on: pull_request
+
+jobs:
+  commitlint:
+    if: ${{ github.actor != 'renovate[bot]' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+      - name: Install
+        run: npm install -g @commitlint/cli @commitlint/config-conventional @commitlint/format
+
+      - name: Check commits
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --color
