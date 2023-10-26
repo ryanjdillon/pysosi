@@ -7,7 +7,7 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import List, Union
 
-from sosi.utf_utils import utf_open
+from pysosi.utf_utils import utf_open
 
 
 def read_sos(fp, indent_char="."):

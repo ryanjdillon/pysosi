@@ -1,0 +1,65 @@
+name: Main PR CI workflow
+
+on:
+  # On every commit pushed to the main branch
+  push:
+    branches: [main]
+  # On commits pushed to pull requests based on the main branch
+  pull_request:
+    branches: [main]
+  # Allows running workflow manually from the actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tox tests and Coverage
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.8]
+
+    steps:
+      # NOTE Every step must contain a`uses` or `run` key
+
+      # Check-out repository under $GITHUB_WORKSPACE, so the job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Configure Python environment per current matrix parameter
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: "x64"
+
+      - name: Cache .tox, trigger on pyproject.toml/tox.ini changes
+        id: cache-deps
+        uses: actions/cache@v3
+        with:
+          path: .tox
+          key: tox-${{ matrix.os }}-python-${{ matrix.config.python-version }}-${{ hashFiles('**/pyproject.toml') }}-${{ hashFiles('**/tox.ini') }}
+
+      - name: Install apt and private dependencies
+        run: |
+          sudo apt-get update
+          pip install --upgrade pip
+          pip install tox>=4.0.0 coveralls
+
+      - name: Test python code ${{ matrix.test_number }}
+        run: tox
+
+      - name: Submit coverage to Coveralls
+        if: ${{ github.actor != 'renovate[bot]' }}
+        run: |
+          # https://coveralls-python.readthedocs.io/en/latest/usage/configuration.html#github-actions-support
+          coveralls --service=github --submit=./coverage.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_FLAG_NAME: test-run-${{ matrix.test_number }}
+          COVERALLS_PARALLEL: false
